@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[اسم المنصة] — منصة إدارة المطاعم عبر QR</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="container">
+    <a class="logo" href="index.html">[اسم المنصة]<small>منصة إدارة المطاعم عبر QR</small></a>
+    <nav>
+      <a href="#how">كيف يعمل</a>
+      <a href="#features">المميزات</a>
+      <a href="#roles">الأدوار</a>
+      <a href="#demo">جرّب الآن</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>اطلب من طاولتك بمسحة واحدة</h1>
+  <p>منصة سحابية متعددة المطاعم: العميل يمسح رمز QR الخاص بطاولته، يتصفح القائمة من هاتفه، ويرسل طلبه — دون تطبيق أو انتظار النادل.</p>
+  <a class="btn" href="menu.html?restaurant=r1&amp;table=5" style="background:#fff;color:#9a3412">جرّب قائمة عميل — طاولة 5</a>
+  <a class="btn secondary" href="#demo" style="background:transparent;color:#fff;border-color:#fff">شاهد واجهات النظام</a>
+</div>
+
+<main class="container">
+  <section>
+    <h2>المشكلة التي نحلّها</h2>
+    <div class="grid">
+      <div class="card"><h3>🐢 بطء أخذ الطلبات</h3><p class="muted">ازدحام الصالة في أوقات الذروة وانتظار طويل للنادل.</p></div>
+      <div class="card"><h3>✍️ أخطاء الطلبات</h3><p class="muted">الطلبات الورقية أو الشفهية تسبب أخطاء بين النادل والمطبخ.</p></div>
+      <div class="card"><h3>🔍 صعوبة المتابعة</h3><p class="muted">صعوبة تتبع حالة كل طلب ومعرفة أداء الفريق.</p></div>
+      <div class="card"><h3>💰 تكلفة عالية</h3><p class="muted">تصميم تطبيق أو نظام خاص لكل مطعم مكلف ومعقّد.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>كيف يعمل النظام</h2>
+    <div class="steps">
+      <div class="step"><div><strong>المسح:</strong> كل مطعم يحصل على رمز QR فريد لكل طاولة، ويتعرف النظام تلقائيًا على المطعم ورقم الطاولة.</div></div>
+      <div class="step"><div><strong>التصفح والطلب:</strong> يعرض النظام القائمة بتصنيفاتها وأسعارها، ويختار العميل أصنافه ويرسل الطلب.</div></div>
+      <div class="step"><div><strong>المطبخ:</strong> يظهر الطلب فورًا في صفحة المطبخ، وعند الانتهاء يضغط الطاهي «تم التجهيز».</div></div>
+      <div class="step"><div><strong>الخدمة:</strong> ينتقل الطلب تلقائيًا إلى صفحة النادل، وبعد وصوله إلى الطاولة يضغط «تم التقديم» فيُغلق دورته.</div></div>
+    </div>
+    <p>دورة الطلب: <span class="pill new">جديد</span> ← <span class="pill ready">جاهز</span> ← <span class="pill served">تم التقديم</span></p>
+  </section>
+
+  <section id="features">
+    <h2>أبرز المميزات</h2>
+    <div class="grid">
+      <div class="card"><h3>🏪 متعدد المطاعم</h3><p class="muted">مطاعم كثيرة على نظام واحد، مع عزل كامل لبيانات كل مطعم.</p></div>
+      <div class="card"><h3>⚡ تحديثات لحظية</h3><p class="muted">انتقال الطلب بين العميل والمطبخ والنادل دون تأخير.</p></div>
+      <div class="card"><h3>📱 بدون تطبيق</h3><p class="muted">يعمل من المتصفح مباشرة على أي هاتف.</p></div>
+      <div class="card"><h3>📊 لوحة إحصائيات</h3><p class="muted">مؤشرات للطلبات والأداء على مستوى المطعم والمنصة.</p></div>
+      <div class="card"><h3>🖨️ سهولة الإعداد</h3><p class="muted">أضف القائمة واطبع رموز QR خلال دقائق.</p></div>
+      <div class="card"><h3>🔒 بيانات معزولة</h3><p class="muted">كل مطعم يرى طلباته وقائمته فقط.</p></div>
+    </div>
+  </section>
+
+  <section id="roles">
+    <h2>الواجهات والأدوار</h2>
+    <table>
+      <tr><th>الدور</th><th>المهام</th></tr>
+      <tr><td><strong>العميل</strong></td><td>تصفح القائمة وإرسال الطلب من الطاولة، دون تسجيل أو تحميل تطبيق.</td></tr>
+      <tr><td><strong>المطبخ</strong></td><td>استقبال الطلبات بترتيب الوصول، وتحديث حالتها إلى «تم التجهيز».</td></tr>
+      <tr><td><strong>النادل</strong></td><td>متابعة الطلبات الجاهزة بحسب الطاولة وتأكيد «تم التقديم».</td></tr>
+      <tr><td><strong>مدير المطعم</strong></td><td>إدارة القائمة والأسعار والطاولات ورموز QR والعاملين، ومتابعة الطلبات والإحصائيات.</td></tr>
+      <tr><td><strong>المشرف العام</strong></td><td>إدارة جميع المطاعم، وتفعيل الحسابات أو إيقافها، وعرض إحصائيات المنصة.</td></tr>
+    </table>
+  </section>
+
+  <section id="demo">
+    <h2>جرّب المنصة الآن — نسخة تجريبية</h2>
+    <p class="muted">بيانات تجريبية محلية في متصفحك. جرّب إرسال طلب من القائمة، ثم شاهده في المطبخ والنادل.</p>
+    <div class="grid">
+      <div class="card"><h3>👤 العميل</h3><p class="muted">قائمة الطاولة 5 — مطعم المشويات الشرقي</p><a class="btn" href="menu.html?restaurant=r1&amp;table=5">فتح القائمة</a></div>
+      <div class="card"><h3>👨‍🍳 المطبخ</h3><p class="muted">الطلبات الجديدة بترتيب الوصول</p><a class="btn" href="kitchen.html">فتح المطبخ</a></div>
+      <div class="card"><h3>🧑‍💼 النادل</h3><p class="muted">الطلبات الجاهزة حسب الطاولة</p><a class="btn" href="waiter.html">فتح صفحة النادل</a></div>
+      <div class="card"><h3>📋 مدير المطعم</h3><p class="muted">القائمة، الطاولات، رموز QR، الإحصائيات</p><a class="btn" href="manager.html">فتح لوحة المدير</a></div>
+      <div class="card"><h3>🛡️ المشرف العام</h3><p class="muted">كل المطاعم والتفعيل وإحصائيات المنصة</p><a class="btn" href="admin.html">فتح لوحة المشرف</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>[اسم المنصة] — منصة إدارة المطاعم عبر QR · نسخة تجريبية · البيانات محلية في متصفحك</footer>
+</body>
+</html>

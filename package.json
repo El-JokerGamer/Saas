@@ -1,0 +1,1 @@
+{"description":"منصة SaaS متعددة المطاعم لإدارة الطلبات عبر رموز QR — بدون اسم تجاري حتى يختار صاحب المشروع الاسم","engines":{"node":">=18"},"keywords":["restaurant","qr","saas","multi-tenant","orders"],"license":"MIT","main":"server.js","name":"saas-restaurant-platform","scripts":{"start":"node server.js"},"type":"commonjs","version":"1.0.0"}

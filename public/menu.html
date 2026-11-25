@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القائمة — [اسم المنصة]</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="container">
+    <a class="logo" href="index.html">[اسم المنصة]<small>منصة إدارة المطاعم عبر QR</small></a>
+    <nav><a href="index.html">الرئيسية</a><a href="kitchen.html">المطبخ</a><a href="waiter.html">النادل</a></nav>
+  </div>
+</header>
+<main class="container">
+  <h1 id="restName">القائمة</h1>
+  <p class="muted" id="restInfo"></p>
+  <p><span class="pill new" id="tablePill"></span></p>
+
+  <label>اختر المطعم</label>
+  <select id="restSelect"></select>
+
+  <div class="chips" id="cats"></div>
+  <div id="items"></div>
+
+  <div class="cart" id="cartBar" style="display:none">
+    <div><strong id="cartCount">0 صنف</strong> · <span id="cartTotal"></span></div>
+    <button class="btn" onclick="sendOrder()">إرسال الطلب</button>
+  </div>
+
+  <section>
+    <h2>تتبع طلبك</h2>
+    <div id="tracking"><p class="muted">لم ترسل طلبًا بعد من هذا المتصفح.</p></div>
+  </section>
+</main>
+<footer>بدون تطبيق — يعمل من المتصفح مباشرة</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  let restaurantId = QR.param('restaurant') || 'r1';
+  let table = QR.param('table') || '5';
+  let activeCat = 'all';
+  const cart = {}; // itemId -> qty
+
+  const restaurants = QR.getRestaurants();
+  const rest = restaurants.find((r) => r.id === restaurantId) || restaurants[0];
+  restaurantId = rest.id;
+
+  const sel = document.getElementById('restSelect');
+  sel.innerHTML = restaurants.map((r) => `<option value="${r.id}" ${r.id === restaurantId ? 'selected' : ''}>${QR.esc(r.name)}</option>`).join('');
+  sel.onchange = () => { location.href = 'menu.html?restaurant=' + sel.value + '&table=' + table; };
+
+  document.getElementById('restName').textContent = rest.name;
+  document.getElementById('restInfo').textContent = rest.description || '';
+  document.getElementById('tablePill').textContent = 'طاولة رقم ' + table;
+
+  function render() {
+    const menu = QR.getMenu(restaurantId);
+    const catsEl = document.getElementById('cats');
+    catsEl.innerHTML = '<button class="chip ' + (activeCat === 'all' ? 'active' : '') + '" data-c="all">الكل</button>' +
+      menu.categories.map((c) => `<button class="chip ${activeCat === c.id ? 'active' : ''}" data-c="${c.id}">${QR.esc(c.name)}</button>`).join('');
+    catsEl.querySelectorAll('.chip').forEach((b) => b.onclick = () => { activeCat = b.dataset.c; render(); });
+
+    const list = menu.items.filter((it) => activeCat === 'all' || it.category === activeCat);
+    document.getElementById('items').innerHTML = list.length ? list.map((it) => `
+      <div class="card" style="margin-bottom:12px">
+        <div class="menu-item">
+          <div><strong>${QR.esc(it.name)}</strong><br><span class="muted">${QR.esc(it.desc || '')}</span></div>
+          <span class="price">${QR.fmt(it.price)}</span>
+        </div>
+        <div class="qty" style="margin-top:10px">
+          <button onclick="changeQty('${it.id}',-1)">−</button>
+          <strong>${cart[it.id] || 0}</strong>
+          <button onclick="changeQty('${it.id}',1)">+</button>
+          <span class="muted">إضافة إلى السلة</span>
+        </div>
+      </div>`).join('') : '<p class="muted">لا توجد أصناف في هذا التصنيف بعد.</p>';
+
+    const entries = Object.entries(cart).filter(([, q]) => q > 0);
+    const total = entries.reduce((s, [id, q]) => { const it = menu.items.find((x) => x.id === id); return s + (it ? it.price * q : 0); }, 0);
+    const bar = document.getElementById('cartBar');
+    bar.style.display = entries.length ? 'flex' : 'none';
+    document.getElementById('cartCount').textContent = entries.reduce((s, [, q]) => s + q, 0) + ' صنف';
+    document.getElementById('cartTotal').textContent = QR.fmt(total);
+  }
+
+  window.changeQty = (id, d) => { cart[id] = Math.max(0, (cart[id] || 0) + d); render(); };
+
+  window.sendOrder = () => {
+    const menu = QR.getMenu(restaurantId);
+    const items = Object.entries(cart).filter(([, q]) => q > 0).map(([id, qty]) => {
+      const it = menu.items.find((x) => x.id === id); return { name: it.name, price: it.price, qty };
+    });
+    if (!items.length) return alert('أضف صنفًا واحدًا على الأقل.');
+    const order = QR.createOrder(restaurantId, table, items, '');
+    Object.keys(cart).forEach((k) => delete cart[k]);
+    render(); renderTracking();
+    alert('تم إرسال طلبك بنجاح! رقم الطلب: ' + order.id);
+  };
+
+  function renderTracking() {
+    const mine = QR.getOrders().filter((o) => o.restaurantId === restaurantId && String(o.table) === String(table)).slice(-3).reverse();
+    document.getElementById('tracking').innerHTML = mine.length ? mine.map((o) => `
+      <div class="card" style="margin-bottom:10px">
+        <strong>طلب ${o.id}</strong> · ${QR.timeOf(o.createdAt)} · <span class="pill ${o.status}">${QR.statusLabel(o.status)}</span>
+        <br><span class="muted">${o.items.map((i) => QR.esc(i.name) + ' ×' + i.qty).join('، ')}</span>
+        <br><strong>الإجمالي: ${QR.fmt(o.total)}</strong>
+      </div>`).join('') : '<p class="muted">لم ترسل طلبًا بعد من هذا المتصفح.</p>';
+  }
+
+  render(); renderTracking();
+  QR.onOrdersChange(renderTracking);
+  window.addEventListener('storage', render);
+})();
+</script>
+</body>
+</html>

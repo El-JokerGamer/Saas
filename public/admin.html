@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المشرف العام — [اسم المنصة]</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="container">
+    <a class="logo" href="index.html">[اسم المنصة]<small>منصة إدارة المطاعم عبر QR</small></a>
+    <nav><a href="index.html">الرئيسية</a><a href="manager.html">مدير المطعم</a></nav>
+  </div>
+</header>
+<main class="container">
+  <h1>🛡️ المشرف العام (Super Admin)</h1>
+  <p class="muted">إدارة جميع المطاعم المشتركة، وتفعيل الحسابات أو إيقافها، وعرض إحصائيات المنصة الشاملة.</p>
+
+  <section>
+    <h2>إحصائيات المنصة</h2>
+    <div class="grid" id="stats"></div>
+  </section>
+
+  <section>
+    <h2>المطاعم المشتركة</h2>
+    <div id="restaurants"></div>
+  </section>
+</main>
+<footer>التفعيل والإيقاف يُحفظان محليًا في متصفحك في النسخة التجريبية</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  function render() {
+    const rs = QR.getRestaurants();
+    const orders = QR.getOrders();
+    const revenue = orders.filter((o) => o.status === 'served').reduce((s, o) => s + o.total, 0);
+    document.getElementById('stats').innerHTML = `
+      <div class="card"><div class="stat">${rs.length}</div><div class="muted">مطعم مشترك</div></div>
+      <div class="card"><div class="stat">${rs.filter((r) => r.isActive).length}</div><div class="muted">مطعم مفعّل</div></div>
+      <div class="card"><div class="stat">${orders.length}</div><div class="muted">إجمالي الطلبات</div></div>
+      <div class="card"><div class="stat">${QR.fmt(revenue)}</div><div class="muted">إيراد الطلبات المقدَّمة</div></div>`;
+    document.getElementById('restaurants').innerHTML = rs.map((r) => {
+      const ro = orders.filter((o) => o.restaurantId === r.id);
+      return `<div class="card" style="margin-bottom:12px">
+        <div class="menu-item"><div><strong>${QR.esc(r.name)}</strong><br><span class="muted">${QR.esc(r.description || '')}</span></div>
+        <span class="pill ${r.isActive ? 'on' : 'off'}">${r.isActive ? 'مفعّل' : 'موقوف'}</span></div>
+        <p class="muted">${ro.length} طلب · ${r.tables.length} طاولة · <a href="menu.html?restaurant=${r.id}&table=1">فتح القائمة</a> · <a href="manager.html?restaurant=${r.id}">لوحة المدير</a></p>
+        <button class="btn ${r.isActive ? 'ghost' : ''}" onclick="toggle('${r.id}')">${r.isActive ? 'إيقاف الحساب' : 'تفعيل الحساب'}</button>
+      </div>`;
+    }).join('');
+  }
+  window.toggle = (id) => {
+    const rs = QR.getRestaurants();
+    const r = rs.find((x) => x.id === id);
+    if (r) { r.isActive = !r.isActive; QR.saveRestaurants(rs); }
+    render();
+  };
+  render();
+  QR.onOrdersChange(render);
+})();
+</script>
+</body>
+</html>

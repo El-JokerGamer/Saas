@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المطبخ — [اسم المنصة]</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="container">
+    <a class="logo" href="index.html">[اسم المنصة]<small>منصة إدارة المطاعم عبر QR</small></a>
+    <nav><a href="index.html">الرئيسية</a><a href="menu.html">القائمة</a><a href="waiter.html">النادل</a></nav>
+  </div>
+</header>
+<main class="container">
+  <h1>👨‍🍳 المطبخ</h1>
+  <p class="muted">الطلبات الجديدة بترتيب الوصول — اضغط «تم التجهيز» عند الانتهاء.</p>
+  <label>المطعم</label>
+  <select id="restSelect"></select>
+  <div id="orders"></div>
+</main>
+<footer>تُحدَّث القائمة تلقائيًا كل 3 ثوانٍ وعند وصول طلب جديد</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  let restaurantId = QR.param('restaurant') || 'r1';
+  const sel = document.getElementById('restSelect');
+  function fillSel() {
+    const rs = QR.getRestaurants();
+    sel.innerHTML = rs.map((r) => `<option value="${r.id}" ${r.id === restaurantId ? 'selected' : ''}>${QR.esc(r.name)}</option>`).join('');
+  }
+  sel.onchange = () => { restaurantId = sel.value; render(); };
+  function render() {
+    fillSel();
+    const list = QR.getOrders().filter((o) => o.restaurantId === restaurantId && o.status === 'new');
+    document.getElementById('orders').innerHTML = list.length ? list.map((o) => `
+      <div class="card" style="margin-bottom:12px">
+        <strong>طاولة ${o.table}</strong> · <span class="muted">${QR.timeOf(o.createdAt)} · ${o.id}</span>
+        <span class="pill new">${QR.statusLabel(o.status)}</span>
+        <ul>${o.items.map((i) => `<li>${QR.esc(i.name)} × ${i.qty} — ${QR.fmt(i.price * i.qty)}</li>`).join('')}</ul>
+        ${o.note ? `<p class="muted">ملاحظة: ${QR.esc(o.note)}</p>` : ''}
+        <p><strong>الإجمالي: ${QR.fmt(o.total)}</strong></p>
+        <button class="btn green" onclick="ready('${o.id}')">تم التجهيز ✓</button>
+      </div>`).join('') : '<p class="muted">لا توجد طلبات جديدة حاليًا. جرّب إرسال طلب من <a href="menu.html?restaurant=' + restaurantId + '&table=5">القائمة</a>.</p>';
+  }
+  window.ready = (id) => { QR.setOrderStatus(id, 'ready'); render(); };
+  render();
+  QR.onOrdersChange(render);
+})();
+</script>
+</body>
+</html>
